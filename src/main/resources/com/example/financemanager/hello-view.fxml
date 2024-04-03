@@ -4,15 +4,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="603.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.financemanager.HelloController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.financemanager.Controller">
    <children>
-      <Button layoutX="69.0" layoutY="40.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="69.0" layoutY="89.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="69.0" layoutY="148.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="69.0" layoutY="209.0" mnemonicParsing="false" onAction="#onHelloButtonClick" text="Button" />
-      <Button layoutX="69.0" layoutY="324.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="69.0" layoutY="266.0" mnemonicParsing="false" text="Button" />
-      <Label fx:id="welcomeText" alignment="CENTER" layoutX="349.0" layoutY="186.0" prefHeight="71.0" prefWidth="196.0" text="Hello" />
+      <Button layoutX="69.0" layoutY="40.0" mnemonicParsing="false" onAction="#addMoney" prefHeight="25.0" prefWidth="124.0" text="Add money" />
+      <Button layoutX="69.0" layoutY="89.0" mnemonicParsing="false" onAction="#removeMoney" prefHeight="25.0" prefWidth="124.0" text="Remove money" />
+      <Button layoutX="69.0" layoutY="148.0" mnemonicParsing="false" onAction="#setBallance" prefHeight="25.0" prefWidth="124.0" text="Set ballance" />
+      <Button layoutX="69.0" layoutY="209.0" mnemonicParsing="false" onAction="#sendMoney" prefHeight="25.0" prefWidth="124.0" text="Send money" />
+      <Button layoutX="69.0" layoutY="324.0" mnemonicParsing="false" onAction="#transactionHistory" prefHeight="25.0" prefWidth="124.0" text="Transaction history" />
+      <Button layoutX="69.0" layoutY="266.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="124.0" text="Button" />
+      <Label fx:id="welcomeText" alignment="CENTER" layoutX="349.0" layoutY="186.0" prefHeight="71.0" prefWidth="196.0" text="E" />
+      <Label layoutX="385.0" layoutY="165.0" text="Balance:" />
    </children>
 </Pane>
