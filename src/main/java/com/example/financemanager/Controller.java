@@ -2,8 +2,13 @@ package com.example.financemanager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+
 
 public class Controller {
+    private double value;
+    private double value2;
     @FXML
     private Label welcomeText;
 
@@ -18,7 +23,7 @@ public class Controller {
         inputDialog.showAndWait().ifPresent(input -> {
             // Validate input as double
             try {
-                double value = Double.parseDouble(input);
+                value = Double.parseDouble(input);
                 // Create confirmation dialog
                 Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
                 confirmation.setHeaderText(null);
@@ -42,7 +47,6 @@ public class Controller {
             }
         });
     }
-
     @FXML
     protected void setBallance(){
         welcomeText.setText("Button set ballance works");
@@ -57,7 +61,37 @@ public class Controller {
     }
     @FXML
     protected void removeMoney(){
-        welcomeText.setText("Button remove money");
+        // Create input dialog
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setHeaderText(null);
+        inputDialog.setTitle("Input");
+        inputDialog.setContentText("Enter the second number:");
+
+        // Show input dialog
+        inputDialog.showAndWait().ifPresent(input -> {
+            // Validate input as double
+            try {
+                value2 = Double.parseDouble(input);
+                if (value2 > value) {
+                    // Second value is greater than the first value, repeat input
+                    showAlert("Second value cannot be greater than the first value.");
+                } else {
+                    // Perform subtraction
+                    double result = value - value2;
+                    System.out.println("Number: " + result);
+                }
+            } catch (NumberFormatException ex) {
+                // Input is not a valid double, show error message and repeat input
+                showAlert("Invalid input! Please enter a valid number.");
+            }
+        });
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }
