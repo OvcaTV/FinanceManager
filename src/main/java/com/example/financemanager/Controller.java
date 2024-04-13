@@ -10,10 +10,36 @@ public class Controller {
     private double value;
     private double value2;
     @FXML
-    private Label welcomeText;
+    private Label balance;
 
     @FXML
     protected void addMoney() {
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setHeaderText(null);
+        inputDialog.setTitle("Input");
+        inputDialog.setContentText("Enter a number:");
+
+        // Show input dialog
+        inputDialog.showAndWait().ifPresent(input -> {
+            // Validate input as double
+            try {
+                double inputValue = Double.parseDouble(input);
+                // If it's the first input, store it
+                if (value == 0.0) {
+                    value = inputValue;
+                } else {
+                    // Add the input value to the first value
+                    value += inputValue;
+                }
+            } catch (NumberFormatException ex) {
+                // Input is not a valid double, show error message and repeat input
+                showAlert("Invalid input! Please enter a valid number.");
+            }
+            balance.setText(String.valueOf(value));
+        });
+    }
+    @FXML
+    protected void setBallance(){
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setHeaderText(null);
         inputDialog.setTitle("Input");
@@ -45,19 +71,16 @@ public class Controller {
                 alert.setContentText("Invalid input! Please enter a valid number.");
                 alert.showAndWait();
             }
+            balance.setText(String.valueOf(value));
         });
     }
     @FXML
-    protected void setBallance(){
-        welcomeText.setText("Button set ballance works");
-    }
-    @FXML
     protected void sendMoney(){
-        welcomeText.setText("Button send money works");
+        balance.setText("Button send money works");
     }
     @FXML
     protected void transactionHistory(){
-        welcomeText.setText("Button transaction history");
+        balance.setText("Button transaction history");
     }
     @FXML
     protected void removeMoney(){
@@ -85,6 +108,7 @@ public class Controller {
                 showAlert("Invalid input! Please enter a valid number.");
             }
         });
+        balance.setText(String.valueOf(value));
     }
 
     private void showAlert(String message) {
@@ -93,5 +117,6 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 
 }

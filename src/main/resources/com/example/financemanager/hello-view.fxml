@@ -12,7 +12,7 @@
       <Button layoutX="69.0" layoutY="209.0" mnemonicParsing="false" onAction="#sendMoney" prefHeight="25.0" prefWidth="124.0" text="Send money" />
       <Button layoutX="69.0" layoutY="324.0" mnemonicParsing="false" onAction="#transactionHistory" prefHeight="25.0" prefWidth="124.0" text="Transaction history" />
       <Button layoutX="69.0" layoutY="266.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="124.0" text="Button" />
-      <Label fx:id="welcomeText" alignment="CENTER" layoutX="349.0" layoutY="186.0" prefHeight="71.0" prefWidth="196.0" text="E" />
+      <Label fx:id="balance" alignment="CENTER" layoutX="349.0" layoutY="186.0" prefHeight="71.0" prefWidth="196.0" text="E" />
       <Label layoutX="385.0" layoutY="165.0" text="Balance:" />
    </children>
 </Pane>
