@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 
 public class Controller {
@@ -76,8 +77,53 @@ public class Controller {
     }
     @FXML
     protected void sendMoney(){
-        balance.setText("Button send money works");
+        // Create input dialog
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setHeaderText(null);
+        inputDialog.setTitle("Input");
+        inputDialog.setContentText("Enter a number:");
+
+        // Show input dialog
+        inputDialog.showAndWait().ifPresent(input -> {
+            // Validate input as double
+            try {
+                double secondValue = Double.parseDouble(input);
+                if (secondValue > value) {
+                    // Second value is greater than the first value, repeat input
+                    showAlert("Second value cannot be greater than the first value.");
+                } else {
+                    // Perform subtraction
+                    value -= secondValue;
+                    // If result is negative, repeat the second input
+                    if (value < 0) {
+                        showAlert("Subtraction result is negative. Please enter a smaller value.");
+                    } else {
+                        // Ask for message
+                        showStringInputDialog(new Stage());
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                // Input is not a valid double, show error message and repeat input
+                showAlert("Invalid input! Please enter a valid number.");
+            }
+        });
+        balance.setText(String.valueOf(value));
     }
+
+    private void showStringInputDialog(Stage primaryStage) {
+        // Create input dialog for string message
+        TextInputDialog stringInputDialog = new TextInputDialog();
+        stringInputDialog.setHeaderText(null);
+        stringInputDialog.setTitle("Message");
+        stringInputDialog.setContentText("Enter a message:");
+
+        // Show string input dialog
+        stringInputDialog.showAndWait().ifPresent(message -> {
+            // Print the message
+            System.out.println("Message: " + message);
+        });
+    }
+
     @FXML
     protected void transactionHistory(){
         balance.setText("Button transaction history");
