@@ -1,10 +1,22 @@
 package com.example.financemanager;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
 
 
 public class Controller {
@@ -14,31 +26,73 @@ public class Controller {
     private Label balance;
 
     @FXML
-    protected void addMoney() {
+    protected void add() {
+// Create input dialog
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setHeaderText(null);
         inputDialog.setTitle("Input");
         inputDialog.setContentText("Enter a number:");
 
-        // Show input dialog
+// Show input dialog
         inputDialog.showAndWait().ifPresent(input -> {
             // Validate input as double
             try {
-                double inputValue = Double.parseDouble(input);
-                // If it's the first input, store it
-                if (value == 0.0) {
-                    value = inputValue;
+                double secondValue = Double.parseDouble(input);
+                if (secondValue <= 0) {
+                    // Input is smaller than 0, repeat input
+                    showAlert("Invalid input! Please enter a number greater than 0.");
+                } else if (secondValue > value) {
+                    // Perform addition
+                    value += secondValue;
+                    StringInputAdd(new Stage());
                 } else {
-                    // Add the input value to the first value
-                    value += inputValue;
+                    // Perform addition
+                    value += secondValue;
+                    StringInputAdd(new Stage());
                 }
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException e) {
                 // Input is not a valid double, show error message and repeat input
                 showAlert("Invalid input! Please enter a valid number.");
             }
-            balance.setText(String.valueOf(value));
+        });
+        balance.setText(String.valueOf(value));
+    }
+    private void StringInputAdd(Stage primaryStage) {
+        // Create input dialog for string message
+        TextInputDialog stringInputDialog = new TextInputDialog();
+        stringInputDialog.setHeaderText(null);
+        stringInputDialog.setTitle("Text");
+        stringInputDialog.setContentText("Enter addition:");
+
+
+        // Show string input dialog
+        stringInputDialog.showAndWait().ifPresent(message -> {
+            // Print the message
+            System.out.println("Message: " + message);
+            // Call the method to save to CSV
+            saveToCSVPlus(value, message, LocalDateTime.now());
         });
     }
+    private String operatorPlus;
+
+    int index = 0;
+    private void saveToCSVPlus(double secondInput, String text, LocalDateTime dateTime) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("output.csv", true))) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = dateTime.format(formatter);
+
+            // Increment index by 1
+            index++;
+
+            // Use semicolons as separators instead of commas
+            String line = String.format("%d;%.2f;%s;%s", index, secondInput, text, formattedDateTime);
+            writer.println(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @FXML
     protected void setBallance(){
         TextInputDialog inputDialog = new TextInputDialog();
@@ -76,19 +130,22 @@ public class Controller {
         });
     }
     @FXML
-    protected void sendMoney(){
-        // Create input dialog
+    protected void remove() {
+// Create input dialog
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setHeaderText(null);
         inputDialog.setTitle("Input");
         inputDialog.setContentText("Enter a number:");
 
-        // Show input dialog
+// Show input dialog
         inputDialog.showAndWait().ifPresent(input -> {
             // Validate input as double
             try {
                 double secondValue = Double.parseDouble(input);
-                if (secondValue > value) {
+                if (secondValue <= 0) {
+                    // Second value is smaller than 0, repeat input
+                    showAlert("Invalid input! Please enter a number greater than 0.");
+                } else if (secondValue > value) {
                     // Second value is greater than the first value, repeat input
                     showAlert("Second value cannot be greater than the first value.");
                 } else {
@@ -99,7 +156,7 @@ public class Controller {
                         showAlert("Subtraction result is negative. Please enter a smaller value.");
                     } else {
                         // Ask for message
-                        showStringInputDialog(new Stage());
+                        StringInputRemove(new Stage());
                     }
                 }
             } catch (NumberFormatException ex) {
@@ -109,53 +166,47 @@ public class Controller {
         });
         balance.setText(String.valueOf(value));
     }
-
-    private void showStringInputDialog(Stage primaryStage) {
+    private void StringInputRemove(Stage primaryStage) {
         // Create input dialog for string message
         TextInputDialog stringInputDialog = new TextInputDialog();
         stringInputDialog.setHeaderText(null);
         stringInputDialog.setTitle("Message");
-        stringInputDialog.setContentText("Enter a message:");
+        stringInputDialog.setContentText("Enter expenditure:");
 
         // Show string input dialog
         stringInputDialog.showAndWait().ifPresent(message -> {
             // Print the message
             System.out.println("Message: " + message);
+            saveToCSVMinus(value2, message, LocalDateTime.now());
         });
+    }
+    private void saveToCSVMinus(double secondInput, String text, LocalDateTime dateTime) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("output.csv", true))) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = dateTime.format(formatter);
+
+            index++;
+
+            // Make the secondInput negative if it's positive
+            if (secondInput > 0) {
+                secondInput *= -1;
+            }
+
+            // Use semicolons as separators instead of commas
+            String line = String.format("%d;%.2f;%s;%s", index, secondInput, text, formattedDateTime);
+            writer.println(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     protected void transactionHistory(){
         balance.setText("Button transaction history");
     }
-    @FXML
-    protected void removeMoney(){
-        // Create input dialog
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setHeaderText(null);
-        inputDialog.setTitle("Input");
-        inputDialog.setContentText("Enter the second number:");
 
-        // Show input dialog
-        inputDialog.showAndWait().ifPresent(input -> {
-            // Validate input as double
-            try {
-                value2 = Double.parseDouble(input);
-                if (value2 > value) {
-                    // Second value is greater than the first value, repeat input
-                    showAlert("Second value cannot be greater than the first value.");
-                } else {
-                    // Perform subtraction
-                    double result = value - value2;
-                    System.out.println("Number: " + result);
-                }
-            } catch (NumberFormatException ex) {
-                // Input is not a valid double, show error message and repeat input
-                showAlert("Invalid input! Please enter a valid number.");
-            }
-        });
-        balance.setText(String.valueOf(value));
-    }
+
+
 
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -163,6 +214,17 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-
+    @FXML
+    protected void clearHistory(){
+        try {
+            // Create FileWriter with append mode set to false
+            FileWriter writer = new FileWriter("output.csv", false);
+            // Close the writer to clear the content of the file
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception (e.g., show an error message)
+        }
+        System.out.println("CSV file cleared");
+    }
 }
