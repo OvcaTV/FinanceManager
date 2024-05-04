@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -12,12 +13,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 
 public class Controller {
     private double value;
@@ -27,51 +31,59 @@ public class Controller {
 
     @FXML
     protected void add() {
-// Create input dialog
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setHeaderText(null);
-        inputDialog.setTitle("Input");
-        inputDialog.setContentText("Enter a number:");
+        // Create a GridPane for input fields
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
 
-// Show input dialog
-        inputDialog.showAndWait().ifPresent(input -> {
-            // Validate input as double
-            try {
-                double secondValue = Double.parseDouble(input);
-                if (secondValue <= 0) {
-                    // Input is smaller than 0, repeat input
-                    showAlert("Invalid input! Please enter a number greater than 0.");
-                } else if (secondValue > value) {
-                    // Perform addition
-                    value += secondValue;
-                    StringInputAdd(new Stage());
-                } else {
-                    // Perform addition
-                    value += secondValue;
-                    StringInputAdd(new Stage());
-                }
-            } catch (NumberFormatException e) {
-                // Input is not a valid double, show error message and repeat input
-                showAlert("Invalid input! Please enter a valid number.");
-            }
-        });
-        balance.setText(String.valueOf(value));
-    }
-    private void StringInputAdd(Stage primaryStage) {
-        // Create input dialog for string message
+        // Number input field
+        TextInputDialog numberInputDialog = new TextInputDialog();
+        numberInputDialog.setHeaderText(null);
+        numberInputDialog.setTitle("Input");
+        numberInputDialog.setContentText("Enter a number:");
+        gridPane.add(new Label("Number:"), 0, 0);
+        gridPane.add(numberInputDialog.getEditor(), 1, 0);
+
+        // String input field
         TextInputDialog stringInputDialog = new TextInputDialog();
         stringInputDialog.setHeaderText(null);
-        stringInputDialog.setTitle("Text");
-        stringInputDialog.setContentText("Enter addition:");
+        stringInputDialog.setTitle("Input");
+        stringInputDialog.setContentText("Enter your text:");
+        gridPane.add(new Label("Text:"), 0, 1);
+        gridPane.add(stringInputDialog.getEditor(), 1, 1);
+
+        // Create a dialog to contain the GridPane
+        Alert dialog = new Alert(Alert.AlertType.NONE);
+        dialog.getDialogPane().setContent(gridPane);
+        dialog.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Show the dialog and wait for the user's response
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // OK button was clicked, process the inputs
+            inputProcessAdd(numberInputDialog, stringInputDialog);
+        }
+    }
 
 
-        // Show string input dialog
-        stringInputDialog.showAndWait().ifPresent(message -> {
-            // Print the message
-            System.out.println("Message: " + message);
-            // Call the method to save to CSV
-            saveToCSVPlus(value, message, LocalDateTime.now());
-        });
+    private void inputProcessAdd(TextInputDialog numberInputDialog, TextInputDialog stringInputDialog) {
+        // Validate number input
+        try {
+            double secondValue = Double.parseDouble(numberInputDialog.getEditor().getText());
+            if (secondValue <= 0) {
+                showAlert("Invalid input! Please enter a number greater than 0.");
+                return;
+            }
+            // Get string input
+            String text = stringInputDialog.getEditor().getText();
+            // Save to CSV
+            saveToCSVPlus(secondValue, text, LocalDateTime.now());
+            // Update balance
+            value += secondValue;
+            balance.setText(String.valueOf(value));
+        } catch (NumberFormatException e) {
+            showAlert("Invalid input! Please enter a valid number.");
+        }
     }
     private String operatorPlus;
 
@@ -131,54 +143,62 @@ public class Controller {
     }
     @FXML
     protected void remove() {
-// Create input dialog
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setHeaderText(null);
-        inputDialog.setTitle("Input");
-        inputDialog.setContentText("Enter a number:");
+        // Create a GridPane for input fields
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
 
-// Show input dialog
-        inputDialog.showAndWait().ifPresent(input -> {
-            // Validate input as double
-            try {
-                double secondValue = Double.parseDouble(input);
-                if (secondValue <= 0) {
-                    // Second value is smaller than 0, repeat input
-                    showAlert("Invalid input! Please enter a number greater than 0.");
-                } else if (secondValue > value) {
-                    // Second value is greater than the first value, repeat input
-                    showAlert("Second value cannot be greater than the first value.");
-                } else {
-                    // Perform subtraction
-                    value -= secondValue;
-                    // If result is negative, repeat the second input
-                    if (value < 0) {
-                        showAlert("Subtraction result is negative. Please enter a smaller value.");
-                    } else {
-                        // Ask for message
-                        StringInputRemove(new Stage());
-                    }
-                }
-            } catch (NumberFormatException ex) {
-                // Input is not a valid double, show error message and repeat input
-                showAlert("Invalid input! Please enter a valid number.");
-            }
-        });
-        balance.setText(String.valueOf(value));
-    }
-    private void StringInputRemove(Stage primaryStage) {
-        // Create input dialog for string message
+        // Number input field
+        TextInputDialog numberInputDialog = new TextInputDialog();
+        numberInputDialog.setHeaderText(null);
+        numberInputDialog.setTitle("Input");
+        numberInputDialog.setContentText("Enter a number:");
+        gridPane.add(new Label("Number:"), 0, 0);
+        gridPane.add(numberInputDialog.getEditor(), 1, 0);
+
+        // String input field
         TextInputDialog stringInputDialog = new TextInputDialog();
         stringInputDialog.setHeaderText(null);
-        stringInputDialog.setTitle("Message");
+        stringInputDialog.setTitle("Input");
         stringInputDialog.setContentText("Enter expenditure:");
+        gridPane.add(new Label("Expenditure:"), 0, 1);
+        gridPane.add(stringInputDialog.getEditor(), 1, 1);
 
-        // Show string input dialog
-        stringInputDialog.showAndWait().ifPresent(message -> {
-            // Print the message
-            System.out.println("Message: " + message);
-            saveToCSVMinus(value2, message, LocalDateTime.now());
-        });
+        // Create a dialog to contain the GridPane
+        Alert dialog = new Alert(Alert.AlertType.NONE);
+        dialog.getDialogPane().setContent(gridPane);
+        dialog.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Show the dialog and wait for the user's response
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // OK button was clicked, process the inputs
+            inputProcessRemove(numberInputDialog, stringInputDialog);        }
+    }
+    private void inputProcessRemove(TextInputDialog numberInputDialog, TextInputDialog stringInputDialog) {
+        // Validate number input
+        try {
+            double secondValue = Double.parseDouble(numberInputDialog.getEditor().getText());
+            if (secondValue <= 0) {
+                showAlert("Invalid input! Please enter a number greater than 0.");
+                return;
+            }
+            if (secondValue > value) {
+                showAlert("Second value cannot be greater than the first value.");
+                // Repeat the input dialog
+                remove();
+                return;
+            }
+            // Get string input
+            String message = stringInputDialog.getEditor().getText();
+            // Save to CSV
+            saveToCSVMinus(secondValue, message, LocalDateTime.now());
+            // Update balance
+            value -= secondValue;
+            balance.setText(String.valueOf(value));
+        } catch (NumberFormatException e) {
+            showAlert("Invalid input! Please enter a valid number.");
+        }
     }
     private void saveToCSVMinus(double secondInput, String text, LocalDateTime dateTime) {
         try (PrintWriter writer = new PrintWriter(new FileWriter("output.csv", true))) {
