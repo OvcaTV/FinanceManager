@@ -1,27 +1,32 @@
 package com.example.financemanager;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 
 public class Controller {
     private double value;
@@ -222,10 +227,44 @@ public class Controller {
 
     @FXML
     protected void transactionHistory(){
-        balance.setText("Button transaction history");
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+
+        TableView<String[]> tableView = new TableView<>();
+
+        // Read CSV file and populate TableView
+        try {
+            ObservableList<String[]> data = FXCollections.observableArrayList();
+            BufferedReader reader = new BufferedReader(new FileReader("output.csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";");
+                data.add(parts);
+            }
+            tableView.getItems().addAll(data);
+            reader.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        // Creating columns for TableView
+        String[] columnNames = {"Position", "Value", "Reason", "Date, time"};
+        for (int i = 0; i < columnNames.length; i++) {
+            final int index = i;
+            TableColumn<String[], String> column = new TableColumn<>(columnNames[i]);
+            column.setCellValueFactory(data -> {
+                String[] rowData = data.getValue();
+                return javafx.beans.binding.Bindings.createStringBinding(() -> rowData[index]);
+            });
+            tableView.getColumns().add(column);
+        }
+
+        VBox root = new VBox(10, tableView);
+        Scene scene = new Scene(root, 300, 300);
+        popupStage.setScene(scene);
+        popupStage.setTitle("CSV Data");
+        popupStage.showAndWait();
     }
-
-
 
 
     private void showAlert(String message) {
@@ -234,6 +273,7 @@ public class Controller {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     @FXML
     protected void clearHistory(){
         try {
