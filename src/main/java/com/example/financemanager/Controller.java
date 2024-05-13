@@ -1,10 +1,8 @@
 package com.example.financemanager;
 
-import javafx.beans.binding.Bindings;
+
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -12,7 +10,6 @@ import javafx.stage.Stage;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -70,7 +67,6 @@ public class Controller {
         }
     }
 
-
     private void inputProcessAdd(TextInputDialog numberInputDialog, TextInputDialog stringInputDialog) {
         // Validate number input
         try {
@@ -90,7 +86,6 @@ public class Controller {
             showAlert("Invalid input! Please enter a valid number.");
         }
     }
-    private String operatorPlus;
 
     int index = 0;
     private void saveToCSVPlus(double secondInput, String text, LocalDateTime dateTime) {
@@ -109,43 +104,6 @@ public class Controller {
         }
     }
 
-
-    @FXML
-    protected void setBallance(){
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setHeaderText(null);
-        inputDialog.setTitle("Input");
-        inputDialog.setContentText("Enter your text:");
-
-        // Show input dialog
-        inputDialog.showAndWait().ifPresent(input -> {
-            // Validate input as double
-            try {
-                value = Double.parseDouble(input);
-                // Create confirmation dialog
-                Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmation.setHeaderText(null);
-                confirmation.setContentText("Do you want to save this number?");
-                ButtonType saveButton = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-                confirmation.getButtonTypes().setAll(ButtonType.CANCEL, saveButton);
-
-                // Show confirmation dialog
-                confirmation.showAndWait().ifPresent(buttonType -> {
-                    if (buttonType == saveButton) {
-                        // Save the input (you can replace this with your saving logic)
-                        System.out.println("Number saved: " + value);
-                    }
-                });
-            } catch (NumberFormatException ex) {
-                // Input is not a valid double, show error message and repeat input
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText(null);
-                alert.setContentText("Invalid input! Please enter a valid number.");
-                alert.showAndWait();
-            }
-            balance.setText(String.valueOf(value));
-        });
-    }
     @FXML
     protected void remove() {
         // Create a GridPane for input fields
@@ -260,12 +218,11 @@ public class Controller {
         }
 
         VBox root = new VBox(10, tableView);
-        Scene scene = new Scene(root, 300, 300);
+        Scene scene = new Scene(root, 325, 300);
         popupStage.setScene(scene);
         popupStage.setTitle("CSV Data");
         popupStage.showAndWait();
     }
-
 
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
