@@ -75,13 +75,13 @@ public class Controller {
                 showAlert("Invalid input! Please enter a number greater than 0.");
                 return;
             }
+            // Update balance
+            value += secondValue;
+            balance.setText(String.valueOf(value));
             // Get string input
             String text = stringInputDialog.getEditor().getText();
             // Save to CSV
             saveToCSVPlus(secondValue, text, LocalDateTime.now());
-            // Update balance
-            value += secondValue;
-            balance.setText(String.valueOf(value));
         } catch (NumberFormatException e) {
             showAlert("Invalid input! Please enter a valid number.");
         }
@@ -97,7 +97,7 @@ public class Controller {
             index++;
 
             // Use semicolons as separators instead of commas
-            String line = String.format("%d;%.2f;%s;%s", index, secondInput, text, formattedDateTime);
+            String line = String.format("%s;%s;%s;%.2f", secondInput, text, formattedDateTime, value);
             writer.println(line);
         } catch (IOException e) {
             e.printStackTrace();
@@ -123,8 +123,8 @@ public class Controller {
         TextInputDialog stringInputDialog = new TextInputDialog();
         stringInputDialog.setHeaderText(null);
         stringInputDialog.setTitle("Input");
-        stringInputDialog.setContentText("Enter expenditure:");
-        gridPane.add(new Label("Expenditure:"), 0, 1);
+        stringInputDialog.setContentText("Enter expense:");
+        gridPane.add(new Label("Expense:"), 0, 1);
         gridPane.add(stringInputDialog.getEditor(), 1, 1);
 
         // Create a dialog to contain the GridPane
@@ -152,13 +152,14 @@ public class Controller {
                 remove();
                 return;
             }
+            // Update balance
+            value -= secondValue;
+            balance.setText(String.valueOf(value));
             // Get string input
             String message = stringInputDialog.getEditor().getText();
             // Save to CSV
             saveToCSVMinus(secondValue, message, LocalDateTime.now());
-            // Update balance
-            value -= secondValue;
-            balance.setText(String.valueOf(value));
+
         } catch (NumberFormatException e) {
             showAlert("Invalid input! Please enter a valid number.");
         }
@@ -176,7 +177,7 @@ public class Controller {
             }
 
             // Use semicolons as separators instead of commas
-            String line = String.format("%d;%.2f;%s;%s", index, secondInput, text, formattedDateTime);
+            String line = String.format("%s;%s;%s;%.2f", secondInput, text, formattedDateTime, value);
             writer.println(line);
         } catch (IOException e) {
             e.printStackTrace();
@@ -204,9 +205,8 @@ public class Controller {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
         // Creating columns for TableView
-        String[] columnNames = {"Position", "Value", "Reason", "Date, time"};
+        String[] columnNames = {"Value", "Reason", "Date, time", "Current money"};
         for (int i = 0; i < columnNames.length; i++) {
             final int index = i;
             TableColumn<String[], String> column = new TableColumn<>(columnNames[i]);
@@ -218,7 +218,7 @@ public class Controller {
         }
 
         VBox root = new VBox(10, tableView);
-        Scene scene = new Scene(root, 325, 300);
+        Scene scene = new Scene(root, 350, 300);
         popupStage.setScene(scene);
         popupStage.setTitle("CSV Data");
         popupStage.showAndWait();

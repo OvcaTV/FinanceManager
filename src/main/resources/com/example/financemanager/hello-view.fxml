@@ -10,7 +10,7 @@
       <Button layoutX="69.0" layoutY="174.0" mnemonicParsing="false" onAction="#remove" prefHeight="25.0" prefWidth="145.0" text="Expenditure" />
       <Button layoutX="69.0" layoutY="331.0" mnemonicParsing="false" onAction="#transactionHistory" prefHeight="25.0" prefWidth="145.0" text="Transaction history" />
       <Button layoutX="69.0" layoutY="257.0" mnemonicParsing="false" onAction="#clearHistory" prefHeight="25.0" prefWidth="145.0" text="Clear transaction history" />
-      <Label fx:id="balance" alignment="CENTER" layoutX="349.0" layoutY="186.0" prefHeight="71.0" prefWidth="196.0" text="0" />
+      <Label fx:id="balance" alignment="CENTER" layoutX="349.0" layoutY="186.0" prefHeight="71.0" prefWidth="196.0" />
       <Label layoutX="385.0" layoutY="165.0" text="Balance:" />
    </children>
 </Pane>
