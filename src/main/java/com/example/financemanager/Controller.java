@@ -1,8 +1,8 @@
 package com.example.financemanager;
 
-
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -13,16 +13,13 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.application.Platform;
 
 
 public class Controller {
@@ -38,14 +35,6 @@ public class Controller {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
 
-        // Number input field
-        TextInputDialog numberInputDialog = new TextInputDialog();
-        numberInputDialog.setHeaderText(null);
-        numberInputDialog.setTitle("Input");
-        numberInputDialog.setContentText("Enter a number:");
-        gridPane.add(new Label("Number:"), 0, 0);
-        gridPane.add(numberInputDialog.getEditor(), 1, 0);
-
         // String input field
         TextInputDialog stringInputDialog = new TextInputDialog();
         stringInputDialog.setHeaderText(null);
@@ -53,6 +42,14 @@ public class Controller {
         stringInputDialog.setContentText("Enter your text:");
         gridPane.add(new Label("Text:"), 0, 1);
         gridPane.add(stringInputDialog.getEditor(), 1, 1);
+
+        // Number input field
+        TextInputDialog numberInputDialog = new TextInputDialog();
+        numberInputDialog.setHeaderText(null);
+        numberInputDialog.setTitle("Input");
+        numberInputDialog.setContentText("Enter a number:");
+        gridPane.add(new Label("Number:"), 0, 0);
+        gridPane.add(numberInputDialog.getEditor(), 1, 0);
 
         // Create a dialog to contain the GridPane
         Alert dialog = new Alert(Alert.AlertType.NONE);
@@ -111,14 +108,6 @@ public class Controller {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
 
-        // Number input field
-        TextInputDialog numberInputDialog = new TextInputDialog();
-        numberInputDialog.setHeaderText(null);
-        numberInputDialog.setTitle("Input");
-        numberInputDialog.setContentText("Enter a number:");
-        gridPane.add(new Label("Number:"), 0, 0);
-        gridPane.add(numberInputDialog.getEditor(), 1, 0);
-
         // String input field
         TextInputDialog stringInputDialog = new TextInputDialog();
         stringInputDialog.setHeaderText(null);
@@ -126,6 +115,14 @@ public class Controller {
         stringInputDialog.setContentText("Enter expense:");
         gridPane.add(new Label("Expense:"), 0, 1);
         gridPane.add(stringInputDialog.getEditor(), 1, 1);
+
+        // Number input field
+        TextInputDialog numberInputDialog = new TextInputDialog();
+        numberInputDialog.setHeaderText(null);
+        numberInputDialog.setTitle("Input");
+        numberInputDialog.setContentText("Enter a number:");
+        gridPane.add(new Label("Number:"), 0, 0);
+        gridPane.add(numberInputDialog.getEditor(), 1, 0);
 
         // Create a dialog to contain the GridPane
         Alert dialog = new Alert(Alert.AlertType.NONE);
@@ -233,15 +230,37 @@ public class Controller {
 
     @FXML
     protected void clearHistory(){
-        try {
-            // Create FileWriter with append mode set to false
-            FileWriter writer = new FileWriter("output.csv", false);
-            // Close the writer to clear the content of the file
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle the exception (e.g., show an error message)
+        // Create custom ButtonTypes for Yes and No
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No");
+
+        // Create the confirmation alert
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Deletion");
+        alert.setHeaderText(null);
+        alert.setContentText("Do you really want to delete all transactions?");
+
+        // Set the custom buttons on the alert
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        // Display the alert and set the focus to the dialog itself
+        Platform.runLater(() -> alert.getDialogPane().requestFocus());
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == yesButton) {
+            try {
+                // Create FileWriter with append mode set to false
+                FileWriter writer = new FileWriter("output.csv", false);
+                // Close the writer to clear the content of the file
+                writer.close();
+                System.out.println("CSV file cleared");
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Handle the exception (e.g., show an error message)
+            }
+        } else {
+            // User chose "No" or closed the dialog
+            System.out.println("Deletion cancelled");
         }
-        System.out.println("CSV file cleared");
     }
 }
